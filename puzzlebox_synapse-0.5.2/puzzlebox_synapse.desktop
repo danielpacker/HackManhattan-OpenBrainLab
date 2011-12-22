@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Puzzlebox Synapse
+GenericName=EEG Brain Interface
+Comment=Connect to EEG Headsets
+Exec=/usr/bin/env python /usr/lib/python2.7/site-packages/synapse-gui.py
+Icon=/usr/share/puzzlebox_synapse/images/puzzlebox.ico
+MimeType=application/x-puzzlebox;
+Terminal=false
+Encoding=UTF-8
+Type=Application
+Categories=Education;Science;
+X-Desktop-File-Install-Version=0.15

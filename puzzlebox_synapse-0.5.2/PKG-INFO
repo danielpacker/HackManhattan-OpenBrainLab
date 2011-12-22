@@ -1,0 +1,16 @@
+Metadata-Version: 1.0
+Name: puzzlebox_synapse
+Version: 0.5.2
+Summary: Puzzlebox Synapse provides a GUI and socket-server interface to commercially available EEG headsets
+Home-page: http://brainstorms.puzzlebox.info
+Author: Steve Castellotti
+Author-email: sc@puzzlebox.info
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Programming Language :: Python
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Topic :: Scientific/Engineering :: Human Machine Interfaces
