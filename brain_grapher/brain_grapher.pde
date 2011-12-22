@@ -49,7 +49,7 @@ void setup() {
        
         println("Connecting to host = " + thinkgearHost + ", port = " + thinkgearPort);
         myClient = new Client(this, thinkgearHost, thinkgearPort);
-        String command = "{\"enableRawOutput\": false, \"format\": \"Json\"}\n";
+        String command = "{\"enableRawOutput\": False, \"format\": \"Json\"}\n";
         print("Sending command");
         println (command);
         myClient.write(command);
@@ -131,31 +131,40 @@ void clientEvent(Client  myClient) {
   
   // Sample JSON data:
   // {"eSense":{"attention":91,"meditation":41},"eegPower":{"delta":1105014,"theta":211310,"lowAlpha":7730,"highAlpha":68568,"lowBeta":12949,"highBeta":47455,"lowGamma":55770,"highGamma":28247},"poorSignalLevel":0}
-  
+  // Actual Mindset json data:  {"timestamp": 1324081789.569501, "poorSignalLevel": 0} {"timestamp": 1324081789.569501, "eegPower": {"lowGamma": 199680, "highGamma": 1246976, "highAlpha": 9509632, "lowBeta": 2821120, "highBeta": 1516544, "lowAlpha": 14619648, "delta": 12588304, "theta": 11434241}} {"timestamp": 1324081789.569501, "eSense": {"attention": 90}} {"timestamp": 1324081789.569501, "eSense": {"meditation": 27}} {"timestamp": 1324081789.573944, "rawEeg": 98}
   if (myClient.available() > 0) {
   
     String data = myClient.readString();
     try {
       JSONObject json = new JSONObject(data);
+//      println (data);
       
-      channels[0].addDataPoint(Integer.parseInt(json.getString("poorSignalLevel")));
-      
-      JSONObject esense = json.getJSONObject("eSense");
-      if (esense != null) {
-        channels[1].addDataPoint(Integer.parseInt(esense.getString("attention")));
-        channels[2].addDataPoint(Integer.parseInt(esense.getString("meditation"))); 
+      if (json.has("poorSignalLevel")) {
+        channels[0].addDataPoint(Integer.parseInt(json.getString("poorSignalLevel")));
       }
-      
-      JSONObject eegPower = json.getJSONObject("eegPower");
-      if (eegPower != null) {
-        channels[3].addDataPoint(Integer.parseInt(eegPower.getString("delta")));
-        channels[4].addDataPoint(Integer.parseInt(eegPower.getString("theta"))); 
-        channels[5].addDataPoint(Integer.parseInt(eegPower.getString("lowAlpha")));
-        channels[6].addDataPoint(Integer.parseInt(eegPower.getString("highAlpha")));  
-        channels[7].addDataPoint(Integer.parseInt(eegPower.getString("lowBeta")));
-        channels[8].addDataPoint(Integer.parseInt(eegPower.getString("highBeta")));
-        channels[9].addDataPoint(Integer.parseInt(eegPower.getString("lowGamma")));
-        channels[10].addDataPoint(Integer.parseInt(eegPower.getString("highGamma")));
+            
+      if (json.has("eSense")) {
+        JSONObject esense = json.getJSONObject("eSense");
+        if (esense != null) {
+          if (esense.has("attention"))
+            channels[1].addDataPoint(Integer.parseInt(esense.getString("attention")));
+          if (esense.has("meditation"))
+            channels[2].addDataPoint(Integer.parseInt(esense.getString("meditation"))); 
+        }
+      }
+
+      if (json.has("eegPower")) {      
+        JSONObject eegPower = json.getJSONObject("eegPower");
+        if (eegPower != null) {
+          channels[3].addDataPoint(Integer.parseInt(eegPower.getString("delta")));
+          channels[4].addDataPoint(Integer.parseInt(eegPower.getString("theta"))); 
+          channels[5].addDataPoint(Integer.parseInt(eegPower.getString("lowAlpha")));
+          channels[6].addDataPoint(Integer.parseInt(eegPower.getString("highAlpha")));  
+          channels[7].addDataPoint(Integer.parseInt(eegPower.getString("lowBeta")));
+          channels[8].addDataPoint(Integer.parseInt(eegPower.getString("highBeta")));
+          channels[9].addDataPoint(Integer.parseInt(eegPower.getString("lowGamma")));
+          channels[10].addDataPoint(Integer.parseInt(eegPower.getString("highGamma")));
+        }
       }
       
       packetCount++;
