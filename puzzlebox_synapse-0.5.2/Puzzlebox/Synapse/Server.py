@@ -407,7 +407,6 @@ class ThinkgearServer(QtCore.QThread):
 				print data
 			
 			connection.write(data)
-			
 			connection.waitForBytesWritten(CLIENT_NO_REPLY_WAIT)
 			
 			if disconnect_after_sending:
@@ -434,6 +433,9 @@ class ThinkgearServer(QtCore.QThread):
 				
 				packet = self.packet_queue[0]
 				del self.packet_queue[0]
+
+				if packet.has_key("rawEeg"): return
+				print packet
 				
 				for connection in self.connections:
 					
