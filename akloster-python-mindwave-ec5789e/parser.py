@@ -43,10 +43,8 @@ class Parser:
                 self.esense_file = None
                 self.socket = bluetooth.BluetoothSocket( bluetooth.RFCOMM )  # use Bluetooth for MindSet
                 self.socket.connect(("00:13:EF:00:3F:FC", 3)) # use Bluetooth for MindSet
+                self.poor_signal = 255
 
-        def polite(self):
-                return(self.socket)
-                
         def update(self):
                 bytes = self.socket.recv(1000)          # modified to read bluetooth stream for MindSet
                 for b in bytes:
@@ -110,6 +108,7 @@ class Parser:
                                                         elif packet_code == 0x02: # Poor signal
                                                                 a = yield
                                                                 self.poor_signal = a
+                                                                
                                                                 if a>0:
                                                                         pass 
                                                                 left-=1

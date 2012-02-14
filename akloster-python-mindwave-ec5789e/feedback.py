@@ -205,7 +205,6 @@ if __name__=="__main__":
         from parser import Parser
         p = Parser()
         feedback_menu(window, p)
-        socket = p.polite()
-        print socket
-        socket.close()
+        print p.socket
+        p.socket.close()
         print "socket closed!"

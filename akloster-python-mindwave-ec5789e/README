@@ -4,6 +4,7 @@ This is a set of simple scripts that interface with the Neurosky Mindwave.
 
 **** The Mindset MAC address is hardcoded for the headset at Hack Manhattan ****
 
+**** F7 to start recording to file, F8 to stop recording
 
 The Mindwave is a kind of Headset that can record EEG brain waves.
 

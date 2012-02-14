@@ -13,8 +13,7 @@ pygame.display.set_caption("Mindwave Viewer")
 from parser import Parser
 
 p = Parser()
-socket = p.polite()
-print socket
+print p.socket
 
 blackColor = pygame.Color(0,0,0)
 redColor = pygame.Color(255,0,0)
@@ -29,13 +28,15 @@ gammaColor = pygame.Color(0,255,255)
 background_img = pygame.image.load("sdl_viewer_background.png")
 
 
-font = pygame.font.Font("freesansbold.ttf",20)
+font = pygame.font.Font("freesansbold.ttf",21)
 raw_eeg = True
 spectra = []
 iteration = 0
 
 meditation_img = font.render("Meditation", False, redColor)
 attention_img = font.render("Attention", False, redColor)
+signal_img = font.render("Contact Quality ", False, redColor)
+key_img = font.render("d   t   a   a   b   b   g   g", False, redColor) 
 
 record_baseline = False
 
@@ -66,30 +67,38 @@ while True:
                                         color = betaColor
                                 else:
                                         color = gammaColor
-                                pygame.draw.rect(window, color, (25+i*10,400-value, 5,value))
+                                pygame.draw.rect(window, color, (25+i*10,200-value, 5,value))
                 else:
                         pass
-                pygame.draw.circle(window,redColor, (800,200),p.current_attention/2)
-                pygame.draw.circle(window,greenColor, (800,200),60/2,1)
-                pygame.draw.circle(window,greenColor, (800,200),100/2,1)
-                window.blit(attention_img, (760,260))
-                pygame.draw.circle(window,redColor, (700,200),p.current_meditation/2)
-                pygame.draw.circle(window,greenColor, (700,200),60/2,1)
-                pygame.draw.circle(window,greenColor, (700,200),100/2,1)
+                pygame.draw.circle(window,redColor, (810,150),p.current_attention/2)
+                pygame.draw.circle(window,greenColor, (810,150),60/2,1)
+                pygame.draw.circle(window,greenColor, (810,150),100/2,1)
+                window.blit(attention_img, (760,210))
+                pygame.draw.circle(window,redColor, (650,150),p.current_meditation/2)
+                pygame.draw.circle(window,greenColor, (650,150),60/2,1)
+                pygame.draw.circle(window,greenColor, (650,150),100/2,1)
+                window.blit(meditation_img, (600,210))
+
+                if p.poor_signal < 50:
+                        pygame.draw.circle(window, greenColor, (150,400),60/2)
+                else:
+                        pygame.draw.circle(window, redColor, (150,400),60/2)
+                window.blit(signal_img, (100,325))
                 
-                window.blit(meditation_img, (600,260))
                 if len(p.current_vector)>7:
                         m = max(p.current_vector)
                         if m == 0:
                                 m = 0.01
-                        for i in range(7):
+                        for i in range(8):
                                 value = p.current_vector[i] *100.0/m
                                 pygame.draw.rect(window, redColor, (600+i*30,450-value, 6,value))
+
+                window.blit(key_img, (600, 275))
 
                 if raw_eeg:
                         lv = 0
                         for i,value in enumerate(p.raw_values[-1000:]):
-                                v = value/ 255.0/ 10
+                                v = value/ 255.0/ 5
                                 pygame.draw.line(window, redColor, (i+25,500-lv),(i+25, 500-v))
                                 lv = v
         else:
@@ -106,7 +115,7 @@ while True:
                         elif event.key== K_F6:
                                 p.write_serial("\xc1")
                         elif event.key==K_ESCAPE:
-                                socket.close()
+                                p.socket.close()
                                 pygame.quit()
                                 sys.exit()
                         elif event.key == K_F7:
