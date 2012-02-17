@@ -29,7 +29,7 @@ in Python in the future, but for now I am satisfied with using Python only.
 
 
 class Parser:
-        def __init__(self):
+        def __init__(self, protocol="serial"):
                 self.parser = self.run()
                 self.parser.next()
                 self.current_vector  =[]
@@ -41,12 +41,20 @@ class Parser:
                 self.state ="initializing"
                 self.raw_file = None
                 self.esense_file = None
-                self.socket = bluetooth.BluetoothSocket( bluetooth.RFCOMM )  # use Bluetooth for MindSet
-                self.socket.connect(("00:13:EF:00:3F:FC", 3)) # use Bluetooth for MindSet
+                self.protocol = protocol
+                if (protocol == "bluetooth"):
+                  self.socket = bluetooth.BluetoothSocket( bluetooth.RFCOMM )  # use Bluetooth for MindSet
+                  self.socket.connect(("00:13:EF:00:3F:FC", 3)) # use Bluetooth for MindSet
+                else:
+                  if (protocol == "serial"):
+                   self.dongle = serial.Serial('/dev/ttyUSB0',  115200,timeout=0.001)
                 self.poor_signal = 255
 
         def update(self):
-                bytes = self.socket.recv(1000)          # modified to read bluetooth stream for MindSet
+                if (self.protocol == "bluetooth"):
+                  bytes = self.socket.recv(1000)          # modified to read bluetooth stream for MindSet
+                else:
+                  bytes = self.dongle.read(1000)
                 for b in bytes:
                         self.parser.send(ord(b))        # Send each byte to the generator
         def write_serial(self, string):
