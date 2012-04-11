@@ -4,6 +4,7 @@ from pygame.locals import *
 import scipy
 from pyeeg import bin_power
 pygame.init()
+import serial
 
 fpsClock= pygame.time.Clock()
 
@@ -12,7 +13,7 @@ pygame.display.set_caption("Mindwave Viewer")
 
 from parser import Parser
 
-p = Parser()
+p = Parser(sys.argv[1])
 
 
 blackColor = pygame.Color(0,0,0)
@@ -32,6 +33,9 @@ font = pygame.font.Font("freesansbold.ttf",21)
 raw_eeg = True
 spectra = []
 iteration = 0
+null = 0 
+serialcounter = 0
+serialdelay = 5
 
 meditation_img = font.render("Meditation", False, redColor)
 attention_img = font.render("Attention", False, redColor)
@@ -39,6 +43,8 @@ signal_img = font.render("Contact Quality ", False, redColor)
 key_img = font.render("d   t   a   a   b   b   g   g", False, redColor) 
 
 record_baseline = False
+
+arduino = serial.Serial('/dev/ttyACM0',9600)
 
 while True:
         p.update()
@@ -49,13 +55,13 @@ while True:
                 flen = 50
                         
                 if len(p.raw_values)>=500:
-                        spectrum, relative_spectrum = bin_power(p.raw_values[-p.buffer_len:], range(flen),512)
-                        spectra.append(array(relative_spectrum))
-                        if len(spectra)>30:
+                       spectrum, relative_spectrum = bin_power(p.raw_values[-p.buffer_len:], range(flen),512)
+                       spectra.append(array(relative_spectrum))
+                       if len(spectra)>30:
                                 spectra.pop(0)
                                 
-                        spectrum = mean(array(spectra),axis=0)
-                        for i in range (flen-1):
+                       spectrum = mean(array(spectra),axis=0)
+                       for i in range (flen-1):
                                 value = float(spectrum[i]*1000) 
                                 if i<3:
                                         color = deltaColor
@@ -79,12 +85,22 @@ while True:
                 pygame.draw.circle(window,greenColor, (650,150),100/2,1)
                 window.blit(meditation_img, (600,210))
 
-                if p.poor_signal < 50:
+                serialcounter += 1
+
+                if (p.poor_signal < 50 and serialcounter > serialdelay):
                         pygame.draw.circle(window, greenColor, (150,400),60/2)
-                else:
-                        pygame.draw.circle(window, redColor, (150,400),60/2)
+                        arduino.write(str(p.current_attention/10))
+			serialcounter = 0
+
+                elif serialcounter > serialdelay: 
+			pygame.draw.circle(window, redColor, (150,400),60/2)
+                        arduino.write(str(null))
+			serialcounter = 0
+ 
+          
                 window.blit(signal_img, (100,325))
-                
+                     
+
                 if len(p.current_vector)>7:
                         m = max(p.current_vector)
                         if m == 0:

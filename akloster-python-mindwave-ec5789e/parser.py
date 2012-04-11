@@ -115,8 +115,12 @@ class Parser:
                                                                         self.raw_file.write("%.4f,%i\n" %(t, value))
                                                         elif packet_code == 0x02: # Poor signal
                                                                 a = yield
+                                                                if a == 255 and self.poor_signal == 0:
+                                                                        a = 49
+                                                                if a < 200 and self.poor_signal == 200:
+                                                                        a = 254
                                                                 self.poor_signal = a
-                                                                
+                                                                # print a
                                                                 if a>0:
                                                                         pass 
                                                                 left-=1
@@ -129,6 +133,7 @@ class Parser:
                                                                                 if self.esense_file:
                                                                                         self.esense_file.write("%.2f,,%i\n" % (time()-self.esense_start_time, v))
                                                                 left-=1
+                                                                # print self.current_attention
                                                         elif packet_code == 0x05: # Meditation (eSense)
                                                                 a = yield
                                                                 if a>0:
