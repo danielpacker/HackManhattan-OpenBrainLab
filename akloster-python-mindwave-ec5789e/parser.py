@@ -25,11 +25,40 @@ in Python in the future, but for now I am satisfied with using Python only.
 """ added code from Puzzlebox Synapse to use Bluetooth serial link for Mindset headset
 """
 
+def getPorts():
+  # scan for available ports. return a list of tuples (num, name)
+  headsetPorts = []
+  for pNum in range(256):
+    pName = "/dev/ttyUSB"+str(pNum)
+    try:
+      s = serial.Serial(pName)
+      headsetPorts.append(pName)
+      s.close()
+    except serial.SerialException:
+      pass
+  return headsetPorts
 
-
+def getParsers():
+  parsers = []
+  ports = getPorts()
+  for port in ports:
+    try:
+      p = Parser("serial", port)
+      parsers.append( (port, p) )
+    except:
+      pass
+  return parsers
 
 class Parser:
-        def __init__(self, protocol="serial"):
+        def __init__(self, protocol="serial", port=""):
+
+                # If no port supplied, guess 
+                if (not port):
+                  if (protocol == "serial"):
+                    port="/dev/ttyUSB0"
+                  else:
+                    port="1:13:EF:00:3F:FC"
+                  
                 self.parser = self.run()
                 self.parser.next()
                 self.current_vector  =[]
@@ -42,12 +71,14 @@ class Parser:
                 self.raw_file = None
                 self.esense_file = None
                 self.protocol = protocol
+                self.port = port
+
                 if (protocol == "bluetooth"):
                   self.socket = bluetooth.BluetoothSocket( bluetooth.RFCOMM )  # use Bluetooth for MindSet
-                  self.socket.connect(("00:13:EF:00:3F:FC", 3)) # use Bluetooth for MindSet
+                  self.socket.connect((port, 3)) # use Bluetooth for MindSet
                 else:
                   if (protocol == "serial"):
-                   self.dongle = serial.Serial('/dev/ttyUSB0',  115200,timeout=0.001)
+                   self.dongle = serial.Serial(port,  115200,timeout=0.001)
                 self.poor_signal = 255
 
         def update(self):

@@ -12,7 +12,8 @@ pygame.display.set_caption("Mindwave Viewer")
 
 from parser import Parser
 
-p = Parser()
+#p = Parser("bluetooth", "9C:B7:0D:75:A9:45")
+p = Parser("serial")
 
 
 blackColor = pygame.Color(0,0,0)

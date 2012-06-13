@@ -12,8 +12,9 @@ pygame.display.set_caption("Mindwave Viewer")
 
 from parser import Parser
 
-p = Parser("serial")
-pb = Parser("bluetooth")
+p = Parser("serial", "/dev/ttyUSB0")
+pb = Parser("serial", "/dev/ttyUSB1")
+#pb = Parser("bluetooth", "00:13:EF:00:4C:2C")
 
 blackColor = pygame.Color(0,0,0)
 redColor = pygame.Color(255,0,0)
@@ -196,8 +197,10 @@ while True:
 		if event.type==KEYDOWN:
 			if event.key== K_F5:
 				p.write_serial("\xc2")
+				pb.write_serial("\xc2")
 			elif event.key== K_F6:
 				p.write_serial("\xc1")
+				pb.write_serial("\xc1")
 			elif event.key==K_ESCAPE:
 				pygame.quit()
 				sys.exit()
