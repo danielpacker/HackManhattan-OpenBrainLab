@@ -13,7 +13,7 @@ GAME_WIDTH=1280
 GAME_HEIGHT=720
 mid_width = GAME_WIDTH/2
 mid_height = GAME_HEIGHT/2
-window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.FULLSCREEN)
+window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))#, pygame.FULLSCREEN)
 pygame.display.set_caption("tug-o-mind")
 
 from parser import *
