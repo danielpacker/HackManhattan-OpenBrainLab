@@ -581,7 +581,7 @@ server will start transmitting any headset data.'''
 					elif value > 100:
 						value = 100
 					
-					response[key][each] = value
+					response[key][each] = int(value)
 			
 			
 			elif key == 'eegPower':
@@ -596,7 +596,7 @@ server will start transmitting any headset data.'''
 						value = THINKGEAR_EEG_POWER_MULTIPLIERS[each] * plot
 					else:
 						value = plot
-					response[key][each] = value
+					response[key][each] = int(value)
 		
 		
 		return(response)
