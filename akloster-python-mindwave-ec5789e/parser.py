@@ -60,7 +60,7 @@ class Parser:
                     port="1:13:EF:00:3F:FC"
                   
                 self.parser = self.run()
-                print("constructor running for "+port)
+                #print("constructor running for "+port)
                 self.parser.next()
                 self.current_vector  =[]
                 self.raw_values =  []

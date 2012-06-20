@@ -13,7 +13,7 @@ GAME_WIDTH=1280
 GAME_HEIGHT=720
 mid_width = GAME_WIDTH/2
 mid_height = GAME_HEIGHT/2
-window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT)) #, pygame.FULLSCREEN)
+window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("tug-o-mind")
 
 from parser import *
@@ -23,9 +23,7 @@ win_font_size = 150
 win_font = pygame.font.Font("freesansbold.ttf", win_font_size)
 
 parsers = getParsers()
-
-# store values for each parsers
-pvalues = {}
+pvalues = []
 
 blackColor = pygame.Color(0,0,0)
 redColor = pygame.Color(255,0,0)
@@ -49,6 +47,7 @@ game_offset=0
 game_over = False
 victor = "NOBODY"
 show_end = True
+attention_values = ()
 
 def resetGame():
   print("Resetting game!")
@@ -84,14 +83,16 @@ def closeParsers():
 
 while True:
   window.blit(background_img,(0,0))
+  i = 0
   for (port,parser) in parsers:
-    #print(port)
     parser.update()
-    #if parser.sending_data:
-    #  print("port " + port)
-    #  print(parser.current_meditation)
-    #else:
+    if parser.sending_data:
+      pvalues.append(parser.current_attention)
+      print("APPENDING " + str(parser.current_attention) + " for port " + port)
+    else:
+      pvalues.append(0)
     #  print("not sending data")
+      pass
 
   # Draw the players
   pygame.draw.circle(window, greenColor, (circle_size+margin+game_offset, mid_height), circle_size, 0)
@@ -113,17 +114,28 @@ while True:
       game_over = True
       victor = "CIRCLE"
 
+
   if (not game_over):
-    randrange = 200
-    randnum = random.randint(0, randrange) - randrange/2
-    game_offset += randnum
+    # calculate new offset
+    # offset should be the difference between the attentions of the two players
+    # so pvalues[port1] - pvalues[port2]
+    # if 1 is greater it will be a shift right
+    # if 2 is greater it will be a shift left
+    print("PVALUES: " + str(pvalues[0]) + " " + str(pvalues[1]))
+    game_offset += (pvalues[0] - pvalues[1])/5
+    pvalues = []
+
+    #randrange = 200
+    #randnum = random.randint(0, randrange) - randrange/2
+    #game_offset += randnum
+    #print("randnum: " + str(randnum))
     sleep(0.1)
   else:
     window.fill(redColor)
     if (show_end):
-      sleep(.05)
+      sleep(.1)
       dark = False
-      for i in range(1, 10):
+      for i in range(1, 7):
         dark = not dark
         if (dark):
           screenColor = (127, 0, 0)
@@ -131,7 +143,7 @@ while True:
           screenColor = redColor
         window.fill(screenColor)
         pygame.display.update()
-        sleep(.1)
+        sleep(.075)
         show_end = False
  
     text = win_font.render(victor + " WINS!", False, blackColor)
@@ -140,8 +152,7 @@ while True:
     window.blit(text, textpos)
     #window.blit(text, (GAME_WIDTH/2-textpos[0]/2, 100)) # left, top
 
-  print("randnum: " + str(randnum))
-  print("game_offset: " + str(game_offset))
+  #print("game_offset: " + str(game_offset))
 
   for event in pygame.event.get():
     if event.type==QUIT:
