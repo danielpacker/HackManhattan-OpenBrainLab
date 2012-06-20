@@ -3,6 +3,7 @@ from numpy import *
 from pygame.locals import *
 import scipy
 from pyeeg import bin_power
+from time import sleep
 pygame.init()
 
 fpsClock= pygame.time.Clock()
@@ -22,11 +23,23 @@ pvalues = {}
 
 def sendConnect():
   for (port,parser) in parsers:
+    print("Connecting to " + port)
     parser.write_serial("\xc2")
+    sleep(1)
+    parser.update()
+    while (parser.dongle_state != "connected"):
+      print(parser.dongle_state)
+      #parser.write_serial("\xc1")
+      parser.write_serial("\xc2")
+      sleep(1)
+      parser.update()
+      print("polling to connect...")
 
 def sendDisconnect():
   for (port,parser) in parsers:
+    print("Disconnecting " + port)
     parser.write_serial("\xc1")
+    sleep(0.5)
 
 def closeParsers():
   for (port,parser) in parsers:
