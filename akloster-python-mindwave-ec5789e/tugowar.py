@@ -19,7 +19,7 @@ pygame.display.set_caption("tug-o-mind")
 from parser import *
 
 background_img = pygame.image.load("tug_bg2.png")
-win_font_size = 100
+win_font_size = 150
 win_font = pygame.font.Font("freesansbold.ttf", win_font_size)
 
 parsers = getParsers()
@@ -48,13 +48,15 @@ margin=GAME_WIDTH/4
 game_offset=0
 game_over = False
 victor = "NOBODY"
+show_end = True
 
 def resetGame():
   print("Resetting game!")
-  global game_offset, victor, game_over
+  global game_offset, victor, game_over, show_end
   game_offset = 0
   victor      = "NOBODY"
   game_over   = False
+  show_end    = True
   sleep(1)
  
 def sendConnect():
@@ -103,7 +105,6 @@ while True:
   #   half of the distance between shapes
   # for the rect to touch the middle ofset must be:
   #   minus half the distance between the sapes
-
   if (game_offset >= (space_between_shapes/2)):
     game_over = True
     victor = "SQUARE"
@@ -113,13 +114,29 @@ while True:
       victor = "CIRCLE"
 
   if (not game_over):
-    range = 100
-    randnum = random.randint(0, range) - range/2
+    randrange = 200
+    randnum = random.randint(0, randrange) - randrange/2
     game_offset += randnum
     sleep(0.1)
   else:
+    window.fill(redColor)
+    if (show_end):
+      sleep(.05)
+      dark = False
+      for i in range(1, 10):
+        dark = not dark
+        if (dark):
+          screenColor = (127, 0, 0)
+        else:
+          screenColor = redColor
+        window.fill(screenColor)
+        pygame.display.update()
+        sleep(.1)
+        show_end = False
+ 
     text = win_font.render(victor + " WINS!", False, blackColor)
-    textpos = text.get_rect(center=(GAME_WIDTH/2, margin+win_font_size-(GAME_HEIGHT/2)))
+    #textpos = text.get_rect(center=(GAME_WIDTH/2, margin+win_font_size-(GAME_HEIGHT/2)))
+    textpos = text.get_rect(center=(GAME_WIDTH/2, GAME_HEIGHT/2))
     window.blit(text, textpos)
     #window.blit(text, (GAME_WIDTH/2-textpos[0]/2, 100)) # left, top
 

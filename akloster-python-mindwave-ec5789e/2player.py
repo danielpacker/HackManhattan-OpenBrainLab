@@ -9,7 +9,7 @@ pygame.init()
 fpsClock= pygame.time.Clock()
 
 window = pygame.display.set_mode((1280,720))
-pygame.display.set_caption("Mindwave Viewer")
+pygame.display.set_caption("2player")
 
 from parser import *
 
@@ -29,7 +29,6 @@ def sendConnect():
     parser.update()
     while (parser.dongle_state != "connected"):
       print(parser.dongle_state)
-      #parser.write_serial("\xc1")
       parser.write_serial("\xc2")
       sleep(1)
       parser.update()
