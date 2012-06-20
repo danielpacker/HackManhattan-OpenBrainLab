@@ -14,7 +14,8 @@
 
 // Modified by David Reeves Apr 2012
 // Accepts serial input from pong.py to control Player 2 via MindWave EEG headset
-// Elevated attention values (> 50) are required to move the bat
+// In this version, input from pong.py as attention values is used as absolute bat position. Up = increased attention
+// Gameplay is slower and more forgiving to compensate for slow update rate.
 
 
 /* ---------------------------------------------------------------------------*/
@@ -151,14 +152,14 @@ void loop() {
       Serial.print((inByte - 48));
     }
 
-    if (sh2y>y && (inByte - 48) > 4) {
-      sh2y--;
-    }
-    if (sh2y<y && (inByte - 48) > 4) {
-      sh2y++;
-    }
-   
-     
+//    if (sh2y>y && (inByte - 48) > 4) {
+//      sh2y--;
+//    }
+//    if (sh2y<y && (inByte - 48) > 4) {
+//      sh2y++;
+//    }
+      sh2y = (10-(inByte - 48));
+      
     
   
   // Human Player 
@@ -180,7 +181,7 @@ void loop() {
   LedSign::Flip();
 
   // Display the bitmap some times 
-  delay(200);
+  delay(500);
   
   // loop :) 
 }
