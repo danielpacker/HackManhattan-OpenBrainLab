@@ -13,7 +13,8 @@ GAME_WIDTH=1280
 GAME_HEIGHT=720
 mid_width = GAME_WIDTH/2
 mid_height = GAME_HEIGHT/2
-window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))#, pygame.FULLSCREEN)
+ATTENTION_FACTOR = 0.05
+window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("tug-o-mind")
 
 from parser import *
@@ -66,23 +67,24 @@ def resetGame():
   sleep(1)
  
 def sendConnect():
-  if (interactive_mode):
+    global interactive_mode
+
     for (port,parser) in parsers:
-      print("Connecting to " + port)
-      parser.write_serial("\xc2")
-      sleep(1)
-      parser.update()
-      pollnum=0
-      while (parser.dongle_state != "connected"):
-        print(parser.dongle_state)
+      if (interactive_mode):
+        print("Connecting to " + port)
         parser.write_serial("\xc2")
         sleep(1)
         parser.update()
-        print("polling to connect...")
-        pollnum += 1
-        if (pollnum >= MAX_POLLS):
-          interactive_mode = False
-          break
+        pollnum=0
+        while (parser.dongle_state != "connected"):
+          print(parser.dongle_state)
+          parser.write_serial("\xc2")
+          sleep(1)
+          parser.update()
+          print("polling to connect...")
+          pollnum += 1
+          if (pollnum >= MAX_POLLS):
+            interactive_mode = False
           
 
 def sendDisconnect():
@@ -139,14 +141,15 @@ while True:
     # if 2 is greater it will be a shift left
     if (interactive_mode):
       print("PVALUES: " + str(pvalues[0]) + " " + str(pvalues[1]))
-      game_offset += (pvalues[0] - pvalues[1])/5
+      game_offset += int((pvalues[0] - pvalues[1]) * ATTENTION_FACTOR)
       pvalues = []
     else:
       randrange = 100
       randnum = random.randint(0, randrange) - randrange/2
       game_offset += randnum
-      print("randnum: " + str(randnum))
-      sleep(0.1)
+      #print("randnum: " + str(randnum))
+    # delay between updates
+    sleep(0.1)
   else:
     window.fill(redColor)
     if (show_end):
