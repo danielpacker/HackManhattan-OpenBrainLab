@@ -2,7 +2,7 @@ import struct
 from time import time
 from numpy import mean
 import serial
-import bluetooth
+#import bluetooth
 """
 
 This is a Driver Class for the Neurosky Mindwave. The Mindwave consists of a headset and an usb dongle.

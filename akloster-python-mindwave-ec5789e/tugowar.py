@@ -22,9 +22,6 @@ background_img = pygame.image.load("tug_bg2.png")
 win_font_size = 150
 win_font = pygame.font.Font("freesansbold.ttf", win_font_size)
 
-parsers = getParsers()
-pvalues = []
-
 blackColor = pygame.Color(0,0,0)
 redColor = pygame.Color(255,0,0)
 ropeColor = pygame.Color(160, 90, 44)
@@ -43,11 +40,20 @@ rect_size=150
 rope_height=10
 rope_width=1100
 margin=GAME_WIDTH/4
+MAX_POLLS = 5
 game_offset=0
 game_over = False
 victor = "NOBODY"
 show_end = True
 attention_values = ()
+interactive_mode = True
+
+# determine if we're in demo mode or using headsets
+parsers = getParsers()
+if (len(parsers) < 2):
+  interactive_mode = False
+pvalues = []
+
 
 def resetGame():
   print("Resetting game!")
@@ -56,20 +62,28 @@ def resetGame():
   victor      = "NOBODY"
   game_over   = False
   show_end    = True
+  interactive_mode = True
   sleep(1)
  
 def sendConnect():
-  for (port,parser) in parsers:
-    print("Connecting to " + port)
-    parser.write_serial("\xc2")
-    sleep(1)
-    parser.update()
-    while (parser.dongle_state != "connected"):
-      print(parser.dongle_state)
+  if (interactive_mode):
+    for (port,parser) in parsers:
+      print("Connecting to " + port)
       parser.write_serial("\xc2")
       sleep(1)
       parser.update()
-      print("polling to connect...")
+      pollnum=0
+      while (parser.dongle_state != "connected"):
+        print(parser.dongle_state)
+        parser.write_serial("\xc2")
+        sleep(1)
+        parser.update()
+        print("polling to connect...")
+        pollnum += 1
+        if (pollnum >= MAX_POLLS):
+          interactive_mode = False
+          break
+          
 
 def sendDisconnect():
   for (port,parser) in parsers:
@@ -84,15 +98,17 @@ def closeParsers():
 while True:
   window.blit(background_img,(0,0))
   i = 0
-  for (port,parser) in parsers:
-    parser.update()
-    if parser.sending_data:
-      pvalues.append(parser.current_attention)
-      print("APPENDING " + str(parser.current_attention) + " for port " + port)
-    else:
-      pvalues.append(0)
-    #  print("not sending data")
-      pass
+
+  if (interactive_mode):
+    for (port,parser) in parsers:
+      parser.update()
+      if parser.sending_data:
+        pvalues.append(parser.current_attention)
+        print("APPENDING " + str(parser.current_attention) + " for port " + port)
+      else:
+        pvalues.append(0)
+      #  print("not sending data")
+        pass
 
   # Draw the players
   pygame.draw.circle(window, greenColor, (circle_size+margin+game_offset, mid_height), circle_size, 0)
@@ -121,15 +137,16 @@ while True:
     # so pvalues[port1] - pvalues[port2]
     # if 1 is greater it will be a shift right
     # if 2 is greater it will be a shift left
-    print("PVALUES: " + str(pvalues[0]) + " " + str(pvalues[1]))
-    game_offset += (pvalues[0] - pvalues[1])/5
-    pvalues = []
-
-    #randrange = 200
-    #randnum = random.randint(0, randrange) - randrange/2
-    #game_offset += randnum
-    #print("randnum: " + str(randnum))
-    sleep(0.1)
+    if (interactive_mode):
+      print("PVALUES: " + str(pvalues[0]) + " " + str(pvalues[1]))
+      game_offset += (pvalues[0] - pvalues[1])/5
+      pvalues = []
+    else:
+      randrange = 100
+      randnum = random.randint(0, randrange) - randrange/2
+      game_offset += randnum
+      print("randnum: " + str(randnum))
+      sleep(0.1)
   else:
     window.fill(redColor)
     if (show_end):
