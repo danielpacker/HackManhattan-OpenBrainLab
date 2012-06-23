@@ -34,7 +34,7 @@ def serialScan(platform_name = None):
     print("platform = " + platform_name)
 
   if (platform_name == "Darwin"):
-    serial_ports = glob.glob('/dev/tty*') + glob.glob('/dev/cu*')
+    serial_ports = glob.glob('/dev/cu.MindWave*')
   else:  # windows support not needed atm
     serial_ports = glob.glob('/dev/ttyUSB*')
   return serial_ports
