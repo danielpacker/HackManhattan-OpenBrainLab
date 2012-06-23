@@ -13,7 +13,7 @@ GAME_WIDTH=1280
 GAME_HEIGHT=720
 mid_width = GAME_WIDTH/2
 mid_height = GAME_HEIGHT/2
-ATTENTION_FACTOR = 0.05
+ATTENTION_FACTOR = 0.1
 window = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("tug-o-mind")
 
@@ -114,8 +114,8 @@ while True:
 
   # persistent graphics
   # draw center line
-  ctr_line_width = 10
-  pygame.draw.rect(window, redColor, (0, GAME_WIDTH/2+(ctr_line_width/2), ctr_line_width/2, 10), 0)
+  ctr_line_width = GAME_WIDTH/25
+  pygame.draw.rect(window, redColor, (GAME_WIDTH/2+(ctr_line_width/2), 0, ctr_line_width/2, GAME_HEIGHT), 0)
 
 
   # Draw the players
