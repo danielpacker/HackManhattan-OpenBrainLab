@@ -33,7 +33,7 @@ def serialScan(platform_name = None):
     platform_name = system()
     print("platform = " + platform_name)
 
-  if (platform_name == "mac"):
+  if (platform_name == "Darwin"):
     serial_ports = glob.glob('/dev/tty*') + glob.glob('/dev/cu*')
   else:  # windows support not needed atm
     serial_ports = glob.glob('/dev/ttyUSB*')
