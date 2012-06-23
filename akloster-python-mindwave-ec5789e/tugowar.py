@@ -113,32 +113,34 @@ while True:
       #  print("not sending data")
         pass
 
-  # persistent graphics
+  ############################################################################
+  # DRAW GAME
+  
   # draw center line
-  ctr_line_width = GAME_WIDTH/25
-  pygame.draw.rect(window, redColor, ((GAME_WIDTH/2)+(ctr_line_width/2), 0, ctr_line_width/2, GAME_HEIGHT), 0)
-  pygame.draw.rect(window, blackColor, ((GAME_WIDTH/2), 0, 1, GAME_HEIGHT), 0)
-
+  ctr_line_width = GAME_WIDTH/40
+  pygame.draw.rect(window, redColor, ((GAME_WIDTH/2)-(ctr_line_width/2), 0, ctr_line_width, GAME_HEIGHT), 0)
+  #pygame.draw.rect(window, blackColor, ((GAME_WIDTH/2), 0, 1, GAME_HEIGHT), 0)
 
   # Draw the players
   pygame.draw.circle(window, greenColor, (circle_size+margin+game_offset, mid_height), circle_size, 0)
   pygame.draw.rect(window, blueColor, (GAME_WIDTH-rect_size-margin+game_offset, mid_height-rect_size/2, rect_size, rect_size), 0)
   # draw rope between players
   space_between_shapes = GAME_WIDTH-(margin*2)-rect_size-(circle_size*2)
-  pygame.draw.rect(window, ropeColor, (game_offset+(circle_size*2)+margin, mid_height-(rope_height/2), space_between_shapes, rope_height), 0)
+  rope = pygame.Rect(game_offset+(circle_size*2)+margin, mid_height-(rope_height/2), space_between_shapes, rope_height)
+  pygame.draw.rect(window, ropeColor, rope, 0)
 
   # the way you konw the game is over is one shape touches the middle
   # for the circle to touch the middle offset must be:
   #   half of the distance between shapes
   # for the rect to touch the middle ofset must be:
   #   minus half the distance between the sapes
-  if (game_offset >= (space_between_shapes/2)):
+  if (rope.right <= (GAME_WIDTH/2)):
     game_over = True
-    victor = "SQUARE"
+    victor = "CIRCLE"
   else:
-    if (game_offset <= -1*(space_between_shapes/2)):
+    if (rope.left >= (GAME_WIDTH/2)):
       game_over = True
-      victor = "CIRCLE"
+      victor = "SQUARE"
 
   if (not game_over):
     # calculate new offset
@@ -152,26 +154,26 @@ while True:
       pvalues = []
     else:
       randrange = 100
-      randnum = random.randint(0, randrange) - randrange/2
+      randnum = -5 #random.randint(0, randrange) - randrange/2
       game_offset += randnum
       #print("randnum: " + str(randnum))
     # delay between updates
     sleep(0.1)
-#  else:
-#    window.fill(redColor)
-#    if (show_end):
-#      sleep(.1)
-#      dark = False
-#      for i in range(1, 7):
-#        dark = not dark
-#        if (dark):
-#          screenColor = (127, 0, 0)
-#        else:
-#          screenColor = redColor
-#        window.fill(screenColor)
-#        pygame.display.update()
-#        sleep(.075)
-#        show_end = False
+  else:
+    window.fill(redColor)
+    if (show_end):
+      sleep(.1)
+      dark = False
+      for i in range(1, 7):
+        dark = not dark
+        if (dark):
+          screenColor = (127, 0, 0)
+        else:
+          screenColor = redColor
+        window.fill(screenColor)
+        pygame.display.update()
+        sleep(.075)
+        show_end = False
  
     text = win_font.render(victor + " WINS!", False, blackColor)
     #textpos = text.get_rect(center=(GAME_WIDTH/2, margin+win_font_size-(GAME_HEIGHT/2)))
