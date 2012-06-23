@@ -116,7 +116,8 @@ while True:
   # persistent graphics
   # draw center line
   ctr_line_width = GAME_WIDTH/25
-  pygame.draw.rect(window, redColor, (GAME_WIDTH/2+(ctr_line_width/2), 0, ctr_line_width/2, GAME_HEIGHT), 0)
+  pygame.draw.rect(window, redColor, ((GAME_WIDTH/2)+(ctr_line_width/2), 0, ctr_line_width/2, GAME_HEIGHT), 0)
+  pygame.draw.rect(window, blackColor, ((GAME_WIDTH/2), 0, 1, GAME_HEIGHT), 0)
 
 
   # Draw the players
@@ -156,21 +157,21 @@ while True:
       #print("randnum: " + str(randnum))
     # delay between updates
     sleep(0.1)
-  else:
-    window.fill(redColor)
-    if (show_end):
-      sleep(.1)
-      dark = False
-      for i in range(1, 7):
-        dark = not dark
-        if (dark):
-          screenColor = (127, 0, 0)
-        else:
-          screenColor = redColor
-        window.fill(screenColor)
-        pygame.display.update()
-        sleep(.075)
-        show_end = False
+#  else:
+#    window.fill(redColor)
+#    if (show_end):
+#      sleep(.1)
+#      dark = False
+#      for i in range(1, 7):
+#        dark = not dark
+#        if (dark):
+#          screenColor = (127, 0, 0)
+#        else:
+#          screenColor = redColor
+#        window.fill(screenColor)
+#        pygame.display.update()
+#        sleep(.075)
+#        show_end = False
  
     text = win_font.render(victor + " WINS!", False, blackColor)
     #textpos = text.get_rect(center=(GAME_WIDTH/2, margin+win_font_size-(GAME_HEIGHT/2)))
