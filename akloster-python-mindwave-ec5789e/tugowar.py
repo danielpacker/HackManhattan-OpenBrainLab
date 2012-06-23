@@ -186,9 +186,9 @@ while True:
     if event.type==KEYDOWN:
       if event.key== K_SPACE:
         resetGame()
-      elif event.key== K_F5:
+      elif event.key== K_F5 or event.key == K_5:
         sendConnect()
-      elif event.key== K_F6:
+      elif event.key== K_F6 or event.key == K_6:
         sendDisconnect()
       elif event.key==K_ESCAPE:
         closeParsers()
