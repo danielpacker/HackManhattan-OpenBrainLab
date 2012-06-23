@@ -19,7 +19,7 @@ pygame.display.set_caption("tug-o-mind")
 
 from parser import *
 
-background_img = pygame.image.load("tug_bg_grass.png")
+background_img = pygame.image.load("bluebg.png")
 win_font_size = 150
 win_font = pygame.font.Font("freesansbold.ttf", win_font_size)
 
@@ -115,12 +115,12 @@ while True:
   # persistent graphics
   # draw center line
   ctr_line_width = 10
-  #pygame.draw.rect(window, whiteColor, (0, GAME_WIDTH/2+(ctr_line_width/2), ctr_line_width/2), 0)
+  pygame.draw.rect(window, redColor, (0, GAME_WIDTH/2+(ctr_line_width/2), ctr_line_width/2, 10), 0)
 
 
   # Draw the players
   pygame.draw.circle(window, greenColor, (circle_size+margin+game_offset, mid_height), circle_size, 0)
-  pygame.draw.rect(window, redColor, (GAME_WIDTH-rect_size-margin+game_offset, mid_height-rect_size/2, rect_size, rect_size), 0)
+  pygame.draw.rect(window, blueColor, (GAME_WIDTH-rect_size-margin+game_offset, mid_height-rect_size/2, rect_size, rect_size), 0)
   # draw rope between players
   space_between_shapes = GAME_WIDTH-(margin*2)-rect_size-(circle_size*2)
   pygame.draw.rect(window, ropeColor, (game_offset+(circle_size*2)+margin, mid_height-(rope_height/2), space_between_shapes, rope_height), 0)
