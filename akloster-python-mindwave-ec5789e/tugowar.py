@@ -41,7 +41,7 @@ rect_size=150
 rope_height=10
 rope_width=1100
 margin=GAME_WIDTH/4
-MAX_POLLS = 5
+MAX_POLLS = 10
 game_offset=0
 game_over = False
 victor = "NOBODY"
@@ -73,18 +73,19 @@ def sendConnect():
       if (interactive_mode):
         print("Connecting to " + port)
         parser.write_serial("\xc2")
-        sleep(1)
+        sleep(2)
         parser.update()
         pollnum=0
         while (parser.dongle_state != "connected"):
           print(parser.dongle_state)
           parser.write_serial("\xc2")
-          sleep(1)
+          sleep(2)
           parser.update()
           print("polling to connect...")
           pollnum += 1
           if (pollnum >= MAX_POLLS):
             interactive_mode = False
+            break
           
 
 def sendDisconnect():
