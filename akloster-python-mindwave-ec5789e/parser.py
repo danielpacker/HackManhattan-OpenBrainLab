@@ -2,6 +2,8 @@ import struct
 from time import time
 from numpy import mean
 import serial
+import glob
+from platform import system
 #import bluetooth
 """
 
@@ -25,18 +27,32 @@ in Python in the future, but for now I am satisfied with using Python only.
 """ added code from Puzzlebox Synapse to use Bluetooth serial link for Mindset headset
 """
 
+def serialScan(platform_name = None):
+  serial_ports = []
+  if (not platform_name):
+    platform_name = system()
+    print("platform = " + platform_name)
+
+  if (platform_name == "mac"):
+    serial_ports = glob.glob('/dev/tty*') + glob.glob('/dev/cu*')
+  else:  # windows support not needed atm
+    serial_ports = glob.glob('/dev/ttyUSB*')
+  return serial_ports
+
+
 def getPorts():
   # scan for available ports. return a list of tuples (num, name)
-  headsetPorts = []
-  for pNum in range(256):
-    pName = "/dev/ttyUSB"+str(pNum)
+  serial_ports = serialScan()
+  headset_ports = []
+  
+  for pName in serial_ports:
     try:
       s = serial.Serial(pName)
-      headsetPorts.append(pName)
+      headset_ports.append(pName)
       s.close()
     except serial.SerialException:
       pass
-  return headsetPorts
+  return headset_ports
 
 def getParsers():
   parsers = []

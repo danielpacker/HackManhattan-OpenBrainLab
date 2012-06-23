@@ -19,7 +19,7 @@ pygame.display.set_caption("tug-o-mind")
 
 from parser import *
 
-background_img = pygame.image.load("tug_bg2.png")
+background_img = pygame.image.load("tug_bg_grass.png")
 win_font_size = 150
 win_font = pygame.font.Font("freesansbold.ttf", win_font_size)
 
@@ -112,6 +112,12 @@ while True:
       #  print("not sending data")
         pass
 
+  # persistent graphics
+  # draw center line
+  ctr_line_width = 10
+  #pygame.draw.rect(window, whiteColor, (0, GAME_WIDTH/2+(ctr_line_width/2), ctr_line_width/2), 0)
+
+
   # Draw the players
   pygame.draw.circle(window, greenColor, (circle_size+margin+game_offset, mid_height), circle_size, 0)
   pygame.draw.rect(window, redColor, (GAME_WIDTH-rect_size-margin+game_offset, mid_height-rect_size/2, rect_size, rect_size), 0)
@@ -131,7 +137,6 @@ while True:
     if (game_offset <= -1*(space_between_shapes/2)):
       game_over = True
       victor = "CIRCLE"
-
 
   if (not game_over):
     # calculate new offset
