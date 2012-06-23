@@ -154,7 +154,7 @@ while True:
       pvalues = []
     else:
       randrange = 100
-      randnum = -5 #random.randint(0, randrange) - randrange/2
+      randnum = random.randint(0, randrange) - randrange/2
       game_offset += randnum
       #print("randnum: " + str(randnum))
     # delay between updates
