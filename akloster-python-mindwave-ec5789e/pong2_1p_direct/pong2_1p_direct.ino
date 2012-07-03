@@ -12,7 +12,7 @@
 //          : from Jimmie P Rodgers www.jimmieprodgers.com      //
 //**************************************************************//
 
-// Modified by David Reeves Apr 2012
+// Modified by David Reeves Jun 2012
 // Accepts serial input from pong.py to control Player 2 via MindWave EEG headset
 // In this version, input from pong.py as attention values is used as absolute bat position. Up = increased attention
 // Gameplay is slower and more forgiving to compensate for slow update rate.

@@ -5,15 +5,52 @@ import scipy
 from pyeeg import bin_power
 pygame.init()
 import serial
+from time import sleep
 
+MAX_POLLS = 55
 fpsClock= pygame.time.Clock()
 
 window = pygame.display.set_mode((1024,600))
 pygame.display.set_caption("Mindwave Viewer")
 
-from parser import Parser
+from parser import *
 
-p = Parser(sys.argv[1])
+def sendConnect():
+    for (port,parser) in parsers:
+      print("Connecting to " + port)
+      parser.write_serial("\xc2")
+      sleep(1)
+      parser.update()
+      pollnum=0
+      while (parser.dongle_state != "connected"):
+        print(parser.dongle_state)
+        parser.write_serial("\xc2")
+        sleep(1)
+        parser.update()
+        print("polling to connect...")
+        pollnum += 1
+        if (pollnum >= MAX_POLLS):
+          break
+          
+
+def sendDisconnect():
+  for (port,parser) in parsers:
+    print("Disconnecting " + port)
+    parser.write_serial("\xc1")
+    sleep(0.5)
+
+def closeParsers():
+  for (port,parser) in parsers:
+    parser.socket.close()
+
+# scan for 2 attached Mindwave dongles
+parsers = getParsers()
+if (len(parsers) < 2):
+  print "Please connect two Mindwave dongles"
+  closeParsers()
+  pygame.quit()
+  sys.exit()
+pvalues = []
 
 # scan for available arduino ports.
 arduinoPort = []
@@ -38,7 +75,6 @@ alphaColor = pygame.Color(255,0,0)
 betaColor = pygame.Color(0,255,00)
 gammaColor = pygame.Color(0,255,255)
 
-
 background_img = pygame.image.load("sdl_viewer_background.png")
 
 
@@ -59,11 +95,27 @@ record_baseline = False
 
 
 while True:
-        p.update()
+        for (port,parser) in parsers:
+          parser.update()
+          if parser.sending_data:
+            pvalues.append(parser.current_attention)
+            print("APPENDING " + str(parser.current_attention) + " for port " + port)
+          else:
+            pvalues.append(0)         
+            print("not sending data")   
+            pass   
+        arduino.write(str(pvalues[0]/10))
+        arduino.write(str(pvalues[1]/10))
+        print (pvalues[0]/10)," ",(pvalues[1]/10)
+        pvalues = []
+        
+
         window.blit(background_img,(0,0))
-        if p.sending_data:
+
+        for (port,parser) in parsers:
+          p = parser
+          if p.sending_data:
                 iteration+=1
-                
                 flen = 50
                         
                 if len(p.raw_values)>=500:
@@ -101,15 +153,14 @@ while True:
 
                 if (p.poor_signal < 50 and serialcounter > serialdelay):
                         pygame.draw.circle(window, greenColor, (150,400),60/2)
-                        arduino.write(str(p.current_attention/10))
-			serialcounter = 0
+                        serialcounter = 0
 
                 elif serialcounter > serialdelay: 
 			pygame.draw.circle(window, redColor, (150,400),60/2)
-                        arduino.write(str(null))
 			serialcounter = 0
  
-          
+     
+
                 window.blit(signal_img, (100,325))
                      
 
@@ -135,24 +186,19 @@ while True:
         
         for event in pygame.event.get():
                 if event.type==QUIT:
+                        closeParsers()
                         pygame.quit()
                         sys.exit()
                 if event.type==KEYDOWN:
-                        if event.key== K_F5:
-                                p.write_serial("\xc2")
-                        elif event.key== K_F6:
-                                p.write_serial("\xc1")
-                        elif event.key==K_ESCAPE:
-                                p.socket.close()
-                                pygame.quit()
-                                sys.exit()
-                        elif event.key == K_F7:
-                                record_baseline = True
-                                p.start_raw_recording("baseline_raw.csv")
-                                p.start_esense_recording("baseline_esense.csv")
-                        elif event.key == K_F8:
-                                record_baseline = False
-                                p.stop_esense_recording()
-                                p.stop_raw_recording()
+                   if event.key== K_SPACE:
+                        resetGame()
+                   elif event.key== K_F5:
+                        sendConnect()
+                   elif event.key== K_F6:
+                        sendDisconnect()
+                   elif event.key==K_ESCAPE:
+                        closeParsers()
+                        pygame.quit()
+                        sys.exit()
         pygame.display.update()
         fpsClock.tick(30)

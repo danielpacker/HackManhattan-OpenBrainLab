@@ -15,6 +15,19 @@ from parser import Parser
 
 p = Parser(sys.argv[1])
 
+# scan for available arduino ports.
+arduinoPort = []
+for pNum in range(256):
+  pName = "/dev/ttyACM"+str(pNum)
+  try:
+    s = serial.Serial(pName)
+    arduinoPort.append(pName)
+    s.close()
+  except serial.SerialException:
+    pass
+
+arduino = serial.Serial(arduinoPort[0],9600)
+
 
 blackColor = pygame.Color(0,0,0)
 redColor = pygame.Color(255,0,0)
@@ -44,7 +57,6 @@ key_img = font.render("d   t   a   a   b   b   g   g", False, redColor)
 
 record_baseline = False
 
-arduino = serial.Serial('/dev/ttyACM3',9600)
 
 while True:
         p.update()
